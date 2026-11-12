@@ -1,0 +1,39 @@
+
+# Angular
+**/node_modules/
+**/dist/
+**/.angular/
+**/coverage/
+**/.env
+**/.env.*
+
+# .NET Core
+**/bin/
+**/obj/
+**/.vs/
+**/TestResults/
+*.user
+*.suo
+
+# Visual Studio / VS Code
+.vscode/
+.idea/
+
+# Logs
+*.log
+**/Logs/
+
+# Local configuration and secrets
+**/appsettings.Development.json
+**/appsettings.Local.json
+**/secrets.json
+*.pfx
+*.p12
+*.key
+
+# Build output
+**/publish/
+
+# OS
+.DS_Store
+Thumbs.db
