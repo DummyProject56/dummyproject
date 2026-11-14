@@ -1,0 +1,67 @@
+<div class="detail-page">
+  <div class="page-header">
+    <div>
+      <h2>Employee Details</h2>
+      <p>Personal information and uploaded documents</p>
+    </div>
+
+    <button (click)="back()">Back to List</button>
+  </div>
+
+  <p *ngIf="loading">Loading employee details...</p>
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <ng-container *ngIf="employee as emp">
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="avatar">
+          <!-- {{ emp.name.charAt(0) | uppercase }} -->
+        </div>
+
+        <div class="profile-name">
+          <h3>{{ emp.name }}</h3>
+          <p>{{ emp.designation }} - {{ emp.department }}</p>
+        </div>
+
+        <button class="edit-btn" (click)="edit()">Edit Employee</button>
+      </div>
+
+      <div class="info-grid">
+        <div>
+          <label>Full Name</label>
+          <p>{{ emp.name }}</p>
+        </div>
+        <div>
+          <label>Email Address</label>
+          <p>{{ emp.email }}</p>
+        </div>
+        <div>
+          <label>Phone Number</label>
+          <p>{{ emp.phone }}</p>
+        </div>
+        <div>
+          <label>Department</label>
+          <p>{{ emp.department }}</p>
+        </div>
+        <div>
+          <label>Designation</label>
+          <p>{{ emp.designation }}</p>
+        </div>
+        <div>
+          <label>Joining Date</label>
+          <!-- <p>{{ emp.joiningDate | date: "dd MM yyyy" }}</p> -->
+        </div>
+        <div>
+          <label>Status</label>
+          <p>
+            <span class="status" [class.inactive]="emp.status === 'Inactive'">
+              {{ emp.status }}
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- <app-documents [employeeId]="emp.id"></app-documents> -->
+  </ng-container>
+</div>

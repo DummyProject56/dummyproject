@@ -1,0 +1,64 @@
+.sidebar {
+  width: 245px;
+  min-height: 100vh;
+  background: #0f172a;
+  color: white;
+  padding: 24px 14px;
+  box-sizing: border-box;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 10px 30px;
+  border-bottom: 1px solid #334155;
+  margin-bottom: 24px;
+
+  strong {
+    display: block;
+    font-size: 16px;
+  }
+  small {
+    display: block;
+    color: #94a3b8;
+  }
+}
+
+.brand-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: #2563eb;
+  font-weight: 700;
+}
+
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px;
+    border-radius: 8px;
+    color: #cbd5e1;
+    text-decoration: none;
+    transition: 0.2s;
+
+    &:hover {
+      background: #1e293b;
+      color: white;
+    }
+
+    &:active {
+      background: #2563eb;
+      color: white;
+    }
+    
+  }
+}

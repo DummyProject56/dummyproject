@@ -1,0 +1,77 @@
+<div class="import-page">
+  <div class="header">
+    <h2>Bulk Import Employees</h2>
+    <p>Import employee records from a CSV or XLSX files.</p>
+  </div>
+
+  <div class="upload-card">
+    <h3>Select Import File</h3>
+    <input type="file" accept=".csv,.xlsx" (change)="onFileSelected($event)" />
+    <p class="hint">Supported formats: CSV, XLSX. Maximum file size: 10 MB.</p>
+    <p *ngIf="selectedFile">
+      Selected: <strong>{{ selectedFile.name }}</strong>
+    </p>
+
+    <button
+      class="primary"
+      [disabled]="!selectedFile || loading"
+      (click)="upload()"
+    >
+      {{ loading ? "Importing..." : "Import Employees" }}
+    </button>
+
+    <p class="error" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </p>
+  </div>
+
+  <div *ngIf="result" class="summary-card">
+    <h3>Import Summary</h3>
+
+    <div class="stats">
+      <div class="stat">
+        <span>Total Records:</span>
+        <strong>{{ result.totalRecords }}</strong>
+      </div>
+
+      <div class="stat success">
+        <span>Successful Imports:</span>
+        <strong>{{ result.successfulRecords }}</strong>
+      </div>
+
+      <div class="stat failed">
+        <span>Failed Imports:</span>
+        <strong>{{ result.failedRecords }}</strong>
+      </div>
+    </div>
+
+    <h3 *ngIf="result.errors.length">Validation Errors</h3>
+
+    <div class="table-scroll" *ngIf="result.errors.length">
+      <table>
+        <thead>
+          <tr>
+            <th>Row Number</th>
+            <th>Field</th>
+            <th>Reason</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let error of result.errors">
+          <tr>
+            <td>{{ error.rowNumber }}</td>
+            <td>{{ error.field }}</td>
+            <td>{{ error.reason }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p *ngIf="result.failedRecords === 0">
+      All records were imported successfully.
+    </p>
+
+    <button class="primary" (click)="goToEmployees()">
+      View Employee List
+    </button>
+  </div>
+</div>

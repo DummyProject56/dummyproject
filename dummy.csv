@@ -1,0 +1,21 @@
+Name,Email,Phone,Department,Designation,JoiningDate,Status
+Test Employee 01,employee01@example.com,9876500001,IT,Software Developer,2021-01-15,Active
+Test Employee 02,employee02@example.com,9876500002,HR,HR Executive,2022-02-15,Active
+Test Employee 03,employee03@example.com,9876500003,Finance,Accountant,2023-03-15,Active
+Test Employee 04,employee04@example.com,9876500004,Sales,Sales Executive,2024-04-15,Active
+Test Employee 05,employee05@example.com,9876500005,Operations,Operations Analyst,2025-05-15,Inactive
+Test Employee 06,employee06@example.com,9876500006,IT,Software Developer,2021-06-15,Active
+Test Employee 07,employee07@example.com,9876500007,HR,HR Executive,2022-07-15,Active
+Test Employee 08,employee08@example.com,9876500008,Finance,Accountant,2023-08-15,Active
+Test Employee 09,employee09@example.com,9876500009,Sales,Sales Executive,2024-09-15,Active
+Test Employee 10,employee10@example.com,9876500010,Operations,Operations Analyst,2025-01-15,Inactive
+Test Employee 11,employee11@example.com,9876500011,IT,Software Developer,2021-02-15,Active
+Test Employee 12,employee12@example.com,9876500012,HR,HR Executive,2022-03-15,Active
+Test Employee 13,employee13@example.com,9876500013,Finance,Accountant,2023-04-15,Active
+Test Employee 14,employee14@example.com,9876500014,Sales,Sales Executive,2024-05-15,Active
+Test Employee 15,employee15@example.com,9876500015,Operations,Operations Analyst,2025-06-15,Inactive
+Test Employee 16,employee16@example.com,9876500016,IT,Software Developer,2021-07-15,Active
+Test Employee 17,employee17@example.com,9876500017,HR,HR Executive,2022-08-15,Active
+Test Employee 18,employee18@example.com,9876500018,Finance,Accountant,2023-09-15,Active
+Test Employee 19,employee19@example.com,9876500019,Sales,Sales Executive,2024-01-15,Active
+Test Employee 20,employee20@example.com,9876500020,Operations,Operations Analyst,2025-02-15,Inactive
