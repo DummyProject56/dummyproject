@@ -1,4 +1,6 @@
 ﻿using EmployeeMS.Application.DTOs;
+using EmployeeMS.Application.DTOs.Employee;
+using EmployeeMS.Application.Interfaces.Employee;
 using EmployeeMS.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,98 +11,66 @@ namespace EmployeeMS.API.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        private readonly EmployeeManagementDbContext _db;
-
-        public EmployeeController(EmployeeManagementDbContext db)
+        private readonly IEmployeeService _service;
+        public EmployeeController(IEmployeeService service)
         {
-            this._db = db;
+            this._service = service;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllEmployee([FromQuery] string? search, [FromQuery] string? department, [FromQuery] string? status, [FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetAllEmployee([FromQuery] EmployeeFilterDto filter, CancellationToken ct)
         {
-            page = Math.Max(page, 1);
-            pageSize = Math.Clamp(pageSize, 1, 100);
+            if (filter.FromDate.HasValue && filter.ToDate.HasValue && filter.FromDate > filter.ToDate)
+            {
+                return BadRequest(new { message = "FromDate cannot exceed ToDate." });
+            }
 
-            var query = _db.Employees.AsNoTracking().AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(search))
-                query = query.Where(e => e.Name.Contains(search) || e.Email.Contains(search));
-
-            if (!string.IsNullOrWhiteSpace(department))
-                query = query.Where(e => e.Department == department);
-
-            if (!string.IsNullOrWhiteSpace(status))
-                query = query.Where(e => e.Status == status);
-
-            if(fromDate.HasValue)
-                query = query.Where(e => e.JoiningDate >=  fromDate.Value.Date);
-
-            if (toDate.HasValue)
-                query = query.Where(e => e.JoiningDate < toDate.Value.Date);
-
-            var total = await query.CountAsync();
-
-            var employees = await query.OrderBy(e => e.Id).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();    
-
-            return Ok(new {total, page, pageSize, employees});
+            var result = await _service.GetAllEmployeeAsync(filter);
+            return Ok(result);
         }
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetEmployee(int id, CancellationToken ct)
         {
-            var employee = await _db.Employees.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
-            return employee is null ? NotFound() : Ok(employee);
+            var employee = await _service.GetEmployeeAsync(id, ct);
+            return employee is null ? NotFound(new { message = "Employee not found." }) : Ok(employee);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateEmployee(EmployeeDto dto)
+        public async Task<IActionResult> CreateEmployee([FromBody] EmployeeRequestDto request, CancellationToken ct)
         {
-            var email = dto.Email.Trim();
-
-            if (await _db.Employees.AnyAsync(e => e.Email == email))
-                return Conflict(new { message = "Email already exists" });
-
-            var employee = new Employee
+            try
             {
-                Name = dto.Name.Trim(),
-                Email = email,
-                Phone = dto.Phone.Trim(),
-                Department = dto.Department.Trim(),
-                Designation = dto.Designation.Trim(),
-                JoiningDate = dto.JoiningDate!.Value.Date,
-                Status = dto.Status.Trim(),
-            };
-
-            _db.Employees.Add(employee);
-            await _db.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetById), new { id = employee.Id }, employee);
+                var employees = await _service.CreateEmployeeAsync(request, ct);
+                return Ok(new { message = "Employee created successfully.", data = employees });
+            }
+            catch (ArgumentException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return StatusCode(500, new { message = ex.InnerException?.Message ?? ex.Message });
+            }
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateEmployee(int id, EmployeeDto dto)
+        public async Task<IActionResult> UpdateEmployee(int id, [FromBody] EmployeeRequestDto request, CancellationToken ct)
         {
-            var employee = await _db.Employees.FindAsync(id);
-            if (employee is null) return NotFound();
-
-            var email = dto.Email.Trim();
-
-            if (await _db.Employees.AnyAsync(e => e.Email == email && e.Id != id))
-                return Conflict(new { message = "Email already exists" });
-
-            employee.Name = dto.Name.Trim();
-            employee.Email = email;
-            employee.Phone = dto.Phone.Trim();
-            employee.Department = dto.Department.Trim();
-            employee.Designation = dto.Designation.Trim();
-            employee.JoiningDate = dto.JoiningDate!.Value.Date;
-            employee.Status = dto.Status.Trim();
-            employee.UpdatedAt = DateTime.UtcNow;
-
-            await _db.SaveChangesAsync();
-
-            return NoContent();
+            try
+            {
+                var updated = await _service.UpdateEmployeeAsync(id, request, ct);
+                return updated ? NoContent() : NotFound(new { message = "Employee not found." });
+            }
+            catch (ArgumentException ex)
+            {
+                return Conflict(new { message = ex.Message });    
+            }
+            catch (DbUpdateException)
+            {
+                return Conflict(new { message = "Employee update failed. Check unique values." });
+            }
         }
     }
 }

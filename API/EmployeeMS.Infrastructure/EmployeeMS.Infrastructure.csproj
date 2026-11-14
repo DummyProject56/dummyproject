@@ -12,6 +12,8 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="ClosedXML" Version="0.105.1" />
+		<PackageReference Include="CsvHelper" Version="31.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.0" />
 	</ItemGroup>
@@ -19,10 +21,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\EmployeeMS.Application\EmployeeMS.Application.csproj" />
 		<ProjectReference Include="..\EmployeeMS.Domain\EmployeeMS.Domain.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Repositories\" />
 	</ItemGroup>
 
 </Project>

@@ -33,10 +33,10 @@ public partial class Employee
     public string Status { get; set; } = null!;
 
     [Column(TypeName = "datetime")]
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     [Column(TypeName = "datetime")]
-    public DateTime UpdatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     [InverseProperty("Employee")]
     public virtual ICollection<EmployeeDocument> EmployeeDocuments { get; set; } = new List<EmployeeDocument>();

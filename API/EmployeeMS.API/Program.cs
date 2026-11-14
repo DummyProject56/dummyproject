@@ -1,16 +1,39 @@
+using EmployeeMS.Application.Interfaces.Employee;
+using EmployeeMS.Application.Services.Employee;
 using EmployeeMS.Domain.Entities;
+using EmployeeMS.Infrastructure.Services.Employee;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ---- no upload size limit ----
-builder.WebHost.ConfigureKestrel(o => o.Limits.MaxRequestBodySize = null);
-builder.Services.Configure<IISServerOptions>(o => o.MaxRequestBodySize = null);
-builder.Services.Configure<FormOptions>(o => o.MultipartBodyLengthLimit = long.MaxValue);
-
 builder.Services.AddControllers();
+
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.OpenApiInfo
+    {
+        Title = "Employee Management API",
+        Version = "v1",
+        Description = " Employee Management System API"
+    });
+});
+
+// ---------- Database ----------
+builder.Services.AddDbContext<EmployeeManagementDbContext>(options =>
+{
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DbContext"),
+        providerOptions => providerOptions.EnableRetryOnFailure()).EnableSensitiveDataLogging().EnableDetailedErrors();
+});
+
+// ---------- Service ----------
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IEmployeeImportService, EmployeeImportService>();
+builder.Services.AddScoped<IEmployeeDocumentService, EmployeeDocumentService>();
 
 // ---------- CORS ----------
 builder.Services.AddCors(options =>
@@ -23,41 +46,26 @@ builder.Services.AddCors(options =>
     });
 });
 
-// ---------- Database ----------
-builder.Services.AddDbContext<EmployeeManagementDbContext>(options =>
-{
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DbContext"),
-        providerOptions => providerOptions.EnableRetryOnFailure()).EnableSensitiveDataLogging().EnableDetailedErrors(); ;
-
-    //if (builder.Environment.IsDevelopment())
-    //    options.EnableSensitiveDataLogging().EnableDetailedErrors();
-});
-
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApi();
-
 var app = builder.Build();
 
-//app.UseMiddleware<ExceptionMiddleware>();
-
-app.MapOpenApi();
-app.UseSwaggerUi(options =>
+if(app.Environment.IsDevelopment())
 {
-    options.DocumentPath = "openapi/v1.json";
-});
+    app.UseSwagger(options =>
+    {
+        options.RouteTemplate = "swagger/{documentName}/swagger.json";
+    });
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Employee Management API v1");
+        options.RoutePrefix = "swagger";
+    });
+}
 
-
-app.UseRouting();
+app.UseHttpsRedirection();
 
 app.UseCors("GlobalCors");
 
-app.UseAuthentication();   // must be before UseAuthorization
-
-//app.UseAuthorization();
-
-//app.UseRateLimiter();
+app.UseAuthorization();
 
 app.MapControllers();
 
